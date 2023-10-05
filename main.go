@@ -8,6 +8,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"sync"
 
 	"golang.org/x/oauth2"
 	"golang.org/x/oauth2/google"
@@ -87,29 +88,58 @@ func main() {
 	}
 
 	docFileId := "1oLrOwwqDF7bSLtVM9ls1D3LLHWkdoku80APUMzAzEBM"
-	doc, err := driveService.Files.Export(docFileId, "application/pdf").Download()
+
+	var wg sync.WaitGroup
+	wg.Add(2)
+
+	go downloadAndSave(driveService, docFileId, "application/vnd.openxmlformats-officedocument.wordprocessingml.document", &wg)
+	go downloadAndSave(driveService, docFileId, "application/pdf", &wg)
+
+	wg.Wait()
+}
+
+func getExtension(mimeType string) string {
+	switch mimeType {
+	case "application/pdf":
+		return "pdf"
+	case "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
+		return "docx"
+	default:
+		return "unknown"
+	}
+}
+
+func downloadAndSave(driveService *drive.Service, fileID string, mimeType string, wg *sync.WaitGroup) {
+	defer wg.Done()
+
+	doc, err := driveService.Files.Export(fileID, mimeType).Download()
 	if err != nil {
-		log.Fatalf("Unable to retrieve data from document: %v", err)
+		log.Printf("Unable to retrieve data from document: %v", err)
+		return
 	}
 	defer doc.Body.Close()
 
-	docName, err := driveService.Files.Get(docFileId).Do()
+	docName, err := driveService.Files.Get(fileID).Do()
 	if err != nil {
-		log.Fatalf("Unable to retrieve document: %v", err)
+		log.Printf("Unable to retrieve document: %v", err)
+		return
 	}
 
 	if doc.StatusCode != http.StatusOK {
-		log.Fatalf("Unable to retrieve data from document: %v", doc.Status)
+		log.Printf("Unable to retrieve data from document: %v", doc.Status)
+		return
 	}
 
-	file, err := os.Create(docName.Name + ".pdf")
+	file, err := os.Create(docName.Name + "." + getExtension(mimeType))
 	if err != nil {
-		log.Fatalf("Unable to save file: %v", err)
+		log.Printf("Unable to save file: %v", err)
+		return
 	}
 	defer file.Close()
 
 	_, err = io.Copy(file, doc.Body)
 	if err != nil {
-		log.Fatalf("Unable to save file: %v", err)
+		log.Printf("Unable to save file: %v", err)
+		return
 	}
 }
