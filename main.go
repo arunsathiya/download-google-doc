@@ -112,32 +112,32 @@ func getExtension(mimeType string) string {
 func downloadAndSave(driveService *drive.Service, fileID string, mimeType string, wg *sync.WaitGroup) {
 	defer wg.Done()
 
-	doc, err := driveService.Files.Export(fileID, mimeType).Download()
+	docResponse, err := driveService.Files.Export(fileID, mimeType).Download()
 	if err != nil {
 		log.Printf("Unable to retrieve data from document: %v", err)
 		return
 	}
-	defer doc.Body.Close()
+	defer docResponse.Body.Close()
 
-	docName, err := driveService.Files.Get(fileID).Do()
+	doc, err := driveService.Files.Get(fileID).Do()
 	if err != nil {
 		log.Printf("Unable to retrieve document: %v", err)
 		return
 	}
 
-	if doc.StatusCode != http.StatusOK {
-		log.Printf("Unable to retrieve data from document: %v", doc.Status)
+	if docResponse.StatusCode != http.StatusOK {
+		log.Printf("Unable to retrieve data from document: %v", docResponse.Status)
 		return
 	}
 
-	file, err := os.Create(docName.Name + "." + getExtension(mimeType))
+	file, err := os.Create(doc.Name + "." + getExtension(mimeType))
 	if err != nil {
 		log.Printf("Unable to save file: %v", err)
 		return
 	}
 	defer file.Close()
 
-	_, err = io.Copy(file, doc.Body)
+	_, err = io.Copy(file, docResponse.Body)
 	if err != nil {
 		log.Printf("Unable to save file: %v", err)
 		return
