@@ -2,6 +2,8 @@
 
 Go program to download a Google document in specific file types. At this time, the program fetches the list of documents in an authenticated Google Drive allows downloading the doc file in ".docx" and ".pdf" formats.
 
+<img width="726" alt="image" src="https://github.com/arunsathiya/download-google-doc/assets/18581859/7211a5a3-e1a3-4da2-a513-e7567e39f2a1">
+
 ### How to run
 
 (Work in progress)
