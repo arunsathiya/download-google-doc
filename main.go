@@ -11,7 +11,7 @@ import (
 func main() {
 	p := tea.NewProgram(tui.NewModel())
 
-	err := p.Start()
+	_, err := p.Run()
 	if err != nil {
 		fmt.Println("Error running program:", err)
 		os.Exit(1)
