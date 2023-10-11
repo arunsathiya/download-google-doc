@@ -13,7 +13,7 @@ At this time, the program runs with a custom Google Cloud Oauth2 client with Goo
 - Create a [Google Cloud project](https://console.cloud.google.com/apis/dashboard) and enable Drive API and Docs API.
 - [Create a Oauth2 client for your project](https://console.cloud.google.com/apis/credentials) and [add your email address as a test user](https://console.cloud.google.com/apis/credentials/consent).
 - Clone repository.
-- In the cloned folder, download the `credentials.json` file.
+- Download the `client_secret_xxx.json` file into the cloned folder, and rename it to `credentials.json`.
 - Run `go run main.go`
 - Authorize your Google Cloud app with your Google account. Copy redirect URL, extract just the token and paste on the terminal screen.
 - `token.json` file should now be created on your folder, which will be used for all API queries. Don't delete this file.
