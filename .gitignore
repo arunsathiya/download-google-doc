@@ -28,3 +28,6 @@ client_secret_*.json
 
 # Skip token.json
 token.json
+
+# Downloaded files
+exports/
