@@ -8,6 +8,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"path/filepath"
 	"sync"
 
 	"github.com/arunsathiya/download-google-doc/tui/keys"
@@ -294,7 +295,7 @@ func downloadAndSave(fileID string, mimeType string, wg *sync.WaitGroup) {
 		return
 	}
 
-	file, err := os.Create(doc.Name + "." + getExtension(mimeType))
+	file, err := os.Create(filepath.Join("exports", doc.Name+"."+getExtension(mimeType)))
 	if err != nil {
 		log.Printf("Unable to save file: %v", err)
 		return
