@@ -295,7 +295,11 @@ func downloadAndSave(fileID string, mimeType string, wg *sync.WaitGroup) {
 		return
 	}
 
-	file, err := os.Create(filepath.Join("exports", doc.Name+"."+getExtension(mimeType)))
+	exportDirectory := "exports"
+
+	createDirectory(exportDirectory)
+
+	file, err := os.Create(filepath.Join(exportDirectory, doc.Name+"."+getExtension(mimeType)))
 	if err != nil {
 		log.Printf("Unable to save file: %v", err)
 		return
@@ -306,5 +310,15 @@ func downloadAndSave(fileID string, mimeType string, wg *sync.WaitGroup) {
 	if err != nil {
 		log.Printf("Unable to save file: %v", err)
 		return
+	}
+}
+
+func createDirectory(directoryPath string) {
+	if _, err := os.Stat(directoryPath); os.IsNotExist(err) {
+		err := os.MkdirAll(directoryPath, 0755)
+		if err != nil {
+			panic(err)
+		}
+		log.Printf("Directory created: %v", directoryPath)
 	}
 }
