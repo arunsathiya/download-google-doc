@@ -23,8 +23,10 @@ go.work
 
 # Skip credentials.json
 credentials.json
-
 client_secret_*.json
 
 # Skip token.json
 token.json
+
+# Misc
+.DS_Store
