@@ -58,14 +58,14 @@ func NewModel() Model {
 	if err != nil {
 		log.Fatalf("Unable to parse client secret file to config: %v", err)
 	}
-	client := getClient(config)
+	client := GetClient(config)
 
 	driveService, err := drive.NewService(ctx, option.WithHTTPClient(client))
 	if err != nil {
 		log.Fatalf("Unable to retrieve Drive client: %v", err)
 	}
 
-	driveFiles, err := getDocs(driveService)
+	driveFiles, err := GetDocs(driveService)
 	if err != nil {
 		log.Fatalf("Unable to retrieve files: %v", err)
 	}
@@ -184,7 +184,7 @@ func (m Model) View() string {
 }
 
 // Retrieves a token, saves the token, then returns the generated client.
-func getClient(config *oauth2.Config) *http.Client {
+func GetClient(config *oauth2.Config) *http.Client {
 	tokFile := "token.json"
 	tok, err := tokenFromFile(tokFile)
 	if err != nil {
@@ -235,7 +235,7 @@ func saveToken(path string, token *oauth2.Token) {
 	json.NewEncoder(f).Encode(token)
 }
 
-func getDocs(driveService *drive.Service) (*drive.FileList, error) {
+func GetDocs(driveService *drive.Service) (*drive.FileList, error) {
 	driveFiles, err := driveService.Files.List().Do()
 	if err != nil {
 		log.Fatalf("Unable to retrieve files: %v", err)
@@ -269,7 +269,7 @@ func downloadAndSave(fileID string, mimeType string, wg *sync.WaitGroup) {
 	if err != nil {
 		log.Fatalf("Unable to parse client secret file to config: %v", err)
 	}
-	client := getClient(config)
+	client := GetClient(config)
 
 	driveService, err := drive.NewService(ctx, option.WithHTTPClient(client))
 	if err != nil {
