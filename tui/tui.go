@@ -136,8 +136,8 @@ func listUpdate(msg tea.Msg, m Model) (tea.Model, tea.Cmd) {
 				var wg sync.WaitGroup
 				wg.Add(2)
 
-				go downloadAndSave(i.id, "application/vnd.openxmlformats-officedocument.wordprocessingml.document", &wg)
-				go downloadAndSave(i.id, "application/pdf", &wg)
+				go DownloadAndSave(i.id, "application/vnd.openxmlformats-officedocument.wordprocessingml.document", &wg)
+				go DownloadAndSave(i.id, "application/pdf", &wg)
 
 				wg.Wait()
 				return m, tea.Quit
@@ -255,7 +255,7 @@ func getExtension(mimeType string) string {
 	}
 }
 
-func downloadAndSave(fileID string, mimeType string, wg *sync.WaitGroup) {
+func DownloadAndSave(fileID string, mimeType string, wg *sync.WaitGroup) {
 	defer wg.Done()
 
 	ctx := context.Background()
