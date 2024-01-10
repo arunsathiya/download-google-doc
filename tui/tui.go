@@ -15,6 +15,7 @@ import (
 	"github.com/charmbracelet/bubbles/key"
 	"github.com/charmbracelet/bubbles/list"
 	tea "github.com/charmbracelet/bubbletea"
+	"github.com/joho/godotenv"
 	"golang.org/x/oauth2"
 	"golang.org/x/oauth2/google"
 	"google.golang.org/api/drive/v3"
@@ -257,6 +258,7 @@ func getExtension(mimeType string) string {
 
 func DownloadAndSave(fileID string, mimeType string, wg *sync.WaitGroup) {
 	defer wg.Done()
+	godotenv.Load()
 
 	ctx := context.Background()
 	b, err := os.ReadFile("credentials.json")
@@ -283,7 +285,7 @@ func DownloadAndSave(fileID string, mimeType string, wg *sync.WaitGroup) {
 	}
 	defer docResponse.Body.Close()
 
-	doc, err := driveService.Files.Get(fileID).Do()
+	_, err = driveService.Files.Get(fileID).Do()
 	if err != nil {
 		log.Printf("Unable to retrieve document: %v", err)
 		return
@@ -294,7 +296,8 @@ func DownloadAndSave(fileID string, mimeType string, wg *sync.WaitGroup) {
 		return
 	}
 
-	file, err := os.Create(doc.Name + "." + getExtension(mimeType))
+	fileName := os.Getenv("FILE_NAME")
+	file, err := os.Create(fileName + "." + getExtension(mimeType))
 	if err != nil {
 		log.Printf("Unable to save file: %v", err)
 		return

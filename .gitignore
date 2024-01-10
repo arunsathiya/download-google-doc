@@ -30,3 +30,6 @@ token.json
 
 # Misc
 .DS_Store
+
+# Env
+.env
